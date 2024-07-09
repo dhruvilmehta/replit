@@ -81,7 +81,7 @@ export const Landing = () => {
         </StyledSelect>
         <StyledButton disabled={loading} onClick={async () => {
           setLoading(true);
-          await axios.post(`${SERVICE_URL}/project`, { replId, language });
+          await axios.post(`/project`, { replId, language });
           setLoading(false);
           navigate(`/coding/?replId=${replId}`)
         }}>{loading ? "Starting ..." : "Start Coding"}</StyledButton>
