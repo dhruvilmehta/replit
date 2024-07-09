@@ -3,6 +3,8 @@ import fs from "fs";
 import yaml from "yaml";
 import path from "path";
 import cors from "cors";
+import dotenv from 'dotenv';
+dotenv.config();
 import { KubeConfig, AppsV1Api, CoreV1Api, NetworkingV1Api } from "@kubernetes/client-node";
 
 const app = express();
@@ -22,7 +24,8 @@ const readAndParseKubeYaml = (filePath: string, replId: string): Array<any> => {
         let docString = doc.toString();
         const regex = new RegExp(`service_name`, 'g');
         const aws_key = new RegExp(`access_key`, 'g');
-        const aws_secret = new RegExp(`access_key_secret`, 'g');
+        const aws_secret = new RegExp(`key_secret`, 'g');
+        console.log(process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY)
         docString = docString.replace(aws_key, process.env.AWS_ACCESS_KEY_ID || "")
         docString = docString.replace(aws_secret, process.env.AWS_SECRET_ACCESS_KEY || "")
         docString = docString.replace(regex, replId);
