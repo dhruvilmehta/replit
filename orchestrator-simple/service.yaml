@@ -35,7 +35,7 @@ spec:
               mountPath: /workspace
       containers:
         - name: runner
-          image: 100xdevs/runner:latest
+          image: dhruvilmehta26/runner:latest
           ports:
             - containerPort: 3001
             - containerPort: 3000

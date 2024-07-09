@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { Editor } from './Editor';
 import { File, RemoteFile, Type } from './external/editor/utils/file-manager';
@@ -12,8 +12,6 @@ function useSocket(replId: string) {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        // const newSocket = io(`ws://${replId}.peetcode.com`);
-        // const newSocket = io(`ws://${replId}.dhruvilmehta.work.gd`);
         const newSocket = io(`ws://${replId}.socket.dhruvilspace.site`);
         setSocket(newSocket);
 
@@ -69,10 +67,9 @@ export const CodingPage = () => {
     }, []);
 
     if (!podCreated) {
-        return <>Booting...</>
+        return <>Booting...</>;
     }
-    return <CodingPagePostPodCreation />
-
+    return <CodingPagePostPodCreation />;
 }
 
 export const CodingPagePostPodCreation = () => {
@@ -83,6 +80,7 @@ export const CodingPagePostPodCreation = () => {
     const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
     const [showOutput, setShowOutput] = useState(false);
+    const terminalRef = useRef(null);
 
     useEffect(() => {
         if (socket) {
@@ -111,6 +109,13 @@ export const CodingPagePostPodCreation = () => {
         }
     };
     
+    useEffect(() => {
+        // Refocus terminal when showOutput changes to true
+        if (showOutput && terminalRef.current) {
+            terminalRef.current.focus();
+        }
+    }, [showOutput]);
+
     if (!loaded) {
         return "Loading...";
     }
@@ -126,7 +131,7 @@ export const CodingPagePostPodCreation = () => {
                 </LeftPanel>
                 <RightPanel>
                     {showOutput && <Output />}
-                    <Terminal socket={socket} />
+                    <Terminal socket={socket} ref={terminalRef} />
                 </RightPanel>
             </Workspace>
         </Container>

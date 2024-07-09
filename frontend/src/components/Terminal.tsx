@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react";
 import { Socket } from "socket.io-client";
 import { Terminal } from "xterm";
 import { FitAddon } from 'xterm-addon-fit';
+
 const fitAddon = new FitAddon();
 
 function ab2str(buf: string) {
@@ -17,43 +18,62 @@ const OPTIONS_TERM = {
         background: "black"
     }
 };
-export const TerminalComponent = ({ socket }: {socket: Socket}) => {
-    const terminalRef = useRef();
+
+export const TerminalComponent = ({ socket }: { socket: Socket }) => {
+    const terminalRef = useRef<HTMLDivElement>(null);
+    const term = useRef<Terminal | null>(null);
 
     useEffect(() => {
-        if (!terminalRef || !terminalRef.current || !socket) {
+        if (!terminalRef.current || !socket) {
             return;
         }
 
         socket.emit("requestTerminal");
-        socket.on("terminal", terminalHandler)
-        const term = new Terminal(OPTIONS_TERM)
-        term.loadAddon(fitAddon);
-        term.open(terminalRef.current);
+        socket.on("terminal", terminalHandler);
+
+        term.current = new Terminal(OPTIONS_TERM);
+        term.current.loadAddon(fitAddon);
+        term.current.open(terminalRef.current);
         fitAddon.fit();
-        function terminalHandler({ data }) {
-            if (data instanceof ArrayBuffer) {
-                console.error(data);
-                console.log(ab2str(data))
-                term.write(ab2str(data))
-            }
-        }
-        term.onData((data) => {
+
+        term.current.onData((data) => {
+            console.log("Typed", data)
             socket.emit('terminalData', {
                 data
             });
         });
+
+        function terminalHandler({ data }) {
+            if (data instanceof ArrayBuffer) {
+                console.error(data);
+                console.log(ab2str(data));
+                term.current?.write(ab2str(data));
+            }
+        }
 
         socket.emit('terminalData', {
             data: '\n'
         });
 
         return () => {
-            socket.off("terminal")
-        }
-    }, [terminalRef]);
+            socket.off("terminal", terminalHandler);
+            term.current?.dispose();
+        };
+    }, [terminalRef, socket]);
 
-    return <div style={{width: "40vw", height: "400px", textAlign: "left"}} ref={terminalRef}>
-        
-    </div>
-}
+    console.log(terminalRef)
+
+    useEffect(() => {
+        const handleFocus = () => {
+            term.current?.focus();
+        };
+
+        window.addEventListener('focus', handleFocus);
+
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, []);
+
+    return <div style={{ width: "40vw", height: "400px", textAlign: "left" }} ref={terminalRef} />;
+};
