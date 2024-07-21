@@ -106,3 +106,12 @@ export const saveToS3 = async (key: string, filePath: string, content: string): 
 
     await s3.putObject(params).promise()
 }
+
+export const saveFolderToS3 = async (key: string, filePath: string): Promise<void> => {
+    const params = {
+        Bucket: process.env.S3_BUCKET ?? "",
+        Key: `${key}${filePath}/`
+    }
+
+    await s3.putObject(params).promise()
+}

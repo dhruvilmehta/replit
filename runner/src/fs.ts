@@ -39,3 +39,14 @@ export const saveFile = async (file: string, content: string): Promise<void> => 
         });
     });
 }
+
+export const saveFolder = async (folder: string): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+        fs.mkdir(folder, { recursive: true }, (err) => {
+            if (err) {
+                return reject(err)
+            }
+            resolve()
+        });
+    })
+}

@@ -5,13 +5,13 @@ export enum Type {
 }
 
 interface CommonProps {
-  id: string; // 文件id
-  type: Type; // 文件类型
-  name: string; // 名称
+  id: string;
+  type: Type;
+  name: string;
   content?: string;
   path: string;
-  parentId: string | undefined; // 父级目录，如果为根目录则undefined
-  depth: number; // 文件深度
+  parentId: string | undefined;
+  depth: number;
 }
 
 export interface File extends CommonProps {

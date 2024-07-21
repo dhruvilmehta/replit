@@ -1,15 +1,11 @@
-import express from "express";
+import { Router } from "express";
 import fs from "fs";
 import yaml from "yaml";
 import path from "path";
-import cors from "cors";
-import dotenv from 'dotenv';
-dotenv.config();
 import { KubeConfig, AppsV1Api, CoreV1Api, NetworkingV1Api } from "@kubernetes/client-node";
+import prisma from "../../prisma";
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+export const serviceRouter=Router()
 
 const kubeconfig = new KubeConfig();
 kubeconfig.loadFromDefault();
@@ -35,9 +31,20 @@ const readAndParseKubeYaml = (filePath: string, replId: string): Array<any> => {
     return docs;
 };
 
-app.post("/start", async (req, res) => {
+serviceRouter.post("/start", async (req, res) => {
     const { userId, replId } = req.body; // Assume a unique identifier for each user
     const namespace = "default"; // Assuming a default namespace, adjust as needed
+    const repl=await prisma.repl.findFirst({
+        where:{
+            name: replId
+        }
+    })
+    // if(repl) res.status(200).json({message: "Repl exists!!"});
+    const deployments = await appsV1Api.listNamespacedDeployment(namespace);
+        
+    // Check if the deployment with the specified name exists
+    const exists = deployments.body.items.some(deployment => deployment.metadata?.name === replId);
+    if(exists) return res.status(200).json({message: "Repl exists!!"});
 
     try {
         const kubeManifests = readAndParseKubeYaml(path.join(__dirname, "../service.yaml"), replId);
@@ -56,14 +63,9 @@ app.post("/start", async (req, res) => {
                     console.log(`Unsupported kind: ${manifest.kind}`);
             }
         }
-        res.status(200).send({ message: "Resources created successfully" });
+        return res.status(200).json({ message: "Resources created successfully" });
     } catch (error) {
         console.error("Failed to create resources", error);
-        res.status(500).send({ message: "Failed to create resources" });
+        return res.status(500).json({ message: "Failed to create resources" });
     }
-});
-
-const port = process.env.PORT || 3002;
-app.listen(port, () => {
-    console.log(`Listening on port: ${port}`);
 });

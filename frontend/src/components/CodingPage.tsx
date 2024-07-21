@@ -1,38 +1,40 @@
-import { useEffect, useState, useRef } from 'react';
-import { Socket, io } from 'socket.io-client';
-import { Editor } from './Editor';
-import { File, RemoteFile, Type } from './external/editor/utils/file-manager';
-import { useSearchParams } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { Output } from './Output';
-import { TerminalComponent as Terminal } from './Terminal';
-import axios from 'axios';
+import { useEffect, useState, useRef } from "react";
+import { Socket, io } from "socket.io-client";
+import { Editor } from "./Editor";
+import { File, RemoteFile, Type } from "./external/editor/utils/file-manager";
+import { useSearchParams } from "react-router-dom";
+import styled from "@emotion/styled";
+import { Output } from "./Output";
+import { TerminalComponent as Terminal } from "./Terminal";
+import axios from "axios";
 
 function useSocket(replId: string) {
-    const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-    useEffect(() => {
-        const newSocket = io(`ws://${replId}.socket.dhruvilspace.site`);
-        setSocket(newSocket);
+  useEffect(() => {
+    const newSocket = io(`ws://${replId}.socket.dhruvilspace.site`);
+    setSocket(newSocket);
 
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [replId]);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [replId]);
 
-    return socket;
+  return socket;
 }
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  color: white;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end; /* Aligns children (button) to the right */
   padding: 10px; /* Adds some space around the button */
+  color: white back;
 `;
 
 const Workspace = styled.div`
@@ -52,88 +54,173 @@ const RightPanel = styled.div`
   width: 40%;
 `;
 
-
+const SERVICE_URL = "http://localhost:3001";
 export const CodingPage = () => {
-    const [podCreated, setPodCreated] = useState(false);
-    const [searchParams] = useSearchParams();
-    const replId = searchParams.get('replId') ?? '';
-    
-    useEffect(() => {
-        if (replId) {
-            axios.post(`/start`, { replId })
-                .then(() => setPodCreated(true))
-                .catch((err) => console.error(err));
-        }
-    }, []);
+  const [podCreated, setPodCreated] = useState(false);
+  const [searchParams] = useSearchParams();
+  const replId = searchParams.get("replId") ?? "";
 
-    if (!podCreated) {
-        return <>Booting...</>;
+  useEffect(() => {
+    if (replId) {
+      axios
+        .post(`${SERVICE_URL}/service/start`, {
+          replId,
+          token: localStorage.getItem("token"),
+        })
+        .then(() => setPodCreated(true))
+        .catch((err) => console.error(err));
     }
-    return <CodingPagePostPodCreation />;
-}
+  }, []);
+
+  if (!podCreated) {
+    return <>Booting...</>;
+  }
+  return <CodingPagePostPodCreation />;
+};
 
 export const CodingPagePostPodCreation = () => {
-    const [searchParams] = useSearchParams();
-    const replId = searchParams.get('replId') ?? '';
-    const [loaded, setLoaded] = useState(false);
-    const socket = useSocket(replId);
-    const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
-    const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
-    const [showOutput, setShowOutput] = useState(false);
-    const terminalRef = useRef(null);
+  const [searchParams] = useSearchParams();
+  const replId = searchParams.get("replId") ?? "";
+  const [loaded, setLoaded] = useState(false);
+  const socket = useSocket(replId);
+  const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+  const [showOutput, setShowOutput] = useState(false);
+  const terminalRef = useRef(null);
 
-    useEffect(() => {
-        if (socket) {
-            socket.on('loaded', ({ rootContent }: { rootContent: RemoteFile[]}) => {
-                setLoaded(true);
-                setFileStructure(rootContent);
-            });
-        }
-    }, [socket]);
-
-    const onSelect = (file: File) => {
-        if (file.type === Type.DIRECTORY) {
-            socket?.emit("fetchDir", file.path, (data: RemoteFile[]) => {
-                setFileStructure(prev => {
-                    const allFiles = [...prev, ...data];
-                    return allFiles.filter((file, index, self) => 
-                        index === self.findIndex(f => f.path === file.path)
-                    );
-                });
-            });
-        } else {
-            socket?.emit("fetchContent", { path: file.path }, (data: string) => {
-                file.content = data;
-                setSelectedFile(file);
-            });
-        }
-    };
-    
-    useEffect(() => {
-        // Refocus terminal when showOutput changes to true
-        if (showOutput && terminalRef.current) {
-            terminalRef.current.focus();
-        }
-    }, [showOutput]);
-
-    if (!loaded) {
-        return "Loading...";
+  useEffect(() => {
+    if (socket) {
+      socket.on("loaded", ({ rootContent }: { rootContent: RemoteFile[] }) => {
+        setLoaded(true);
+        setFileStructure(rootContent);
+      });
     }
+  }, [socket]);
 
-    return (
-        <Container>
-             <ButtonContainer>
-                <button onClick={() => setShowOutput(!showOutput)}>See output</button>
-            </ButtonContainer>
-            <Workspace>
-                <LeftPanel>
-                    <Editor socket={socket} selectedFile={selectedFile} onSelect={onSelect} files={fileStructure} />
-                </LeftPanel>
-                <RightPanel>
-                    {showOutput && <Output />}
-                    <Terminal socket={socket} ref={terminalRef} />
-                </RightPanel>
-            </Workspace>
-        </Container>
-    );
-}
+  const onSelect = (file: File) => {
+    if (file.type === Type.DIRECTORY) {
+      socket?.emit("fetchDir", file.path, (data: RemoteFile[]) => {
+        setFileStructure((prev) => {
+          const allFiles = [...prev, ...data];
+          return allFiles.filter(
+            (file, index, self) =>
+              index === self.findIndex((f) => f.path === file.path),
+          );
+        });
+      });
+      setSelectedFile(file);
+    } else {
+      socket?.emit("fetchContent", { path: file.path }, (data: string) => {
+        file.content = data;
+        setSelectedFile(file);
+      });
+    }
+  };
+
+  const onNewFile = (name: string) => {
+    console.log("New File", selectedFile);
+    let fileString;
+    if (selectedFile?.type === Type.DIRECTORY) {
+      fileString = `${selectedFile?.id}`;
+    } else {
+      fileString = `${
+        selectedFile?.parentId !== "0" ? selectedFile?.parentId : ""
+      }`;
+    }
+    console.log(fileString);
+    socket?.emit("newFile", { path: fileString, name: name });
+    socket?.emit("fetchDir", fileString, (data: RemoteFile[]) => {
+      setFileStructure((prev) => {
+        const allFiles = [...prev, ...data];
+        return allFiles.filter(
+          (file, index, self) =>
+            index === self.findIndex((f) => f.path === file.path),
+        );
+      });
+    });
+  };
+
+  const onNewFolder = (name: string) => {
+    let fileString;
+    if (selectedFile?.type === Type.DIRECTORY) {
+      fileString = `${selectedFile?.id}`;
+    } else {
+      fileString = `${
+        selectedFile?.parentId !== "0" ? selectedFile?.parentId : ""
+      }`;
+    }
+    socket?.emit("newFolder", { path: fileString, name: name });
+    socket?.emit("fetchDir", fileString, (data: RemoteFile[]) => {
+      setFileStructure((prev) => {
+        const allFiles = [...prev, ...data];
+        return allFiles.filter(
+          (file, index, self) =>
+            index === self.findIndex((f) => f.path === file.path),
+        );
+      });
+    });
+  };
+
+  useEffect(() => {
+    // Refocus terminal when showOutput changes to true
+    if (showOutput && terminalRef.current) {
+      terminalRef.current.focus();
+    }
+  }, [showOutput]);
+
+  if (!loaded) {
+    return "Loading...";
+  }
+  if (!socket) return;
+
+  console.log(replId, "REPLID")
+
+  return (
+    <Container>
+      <div className="mb-4 flex justify-end">
+        <button
+          onClick={() => setShowOutput(!showOutput)}
+          className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          See output
+        </button>
+        <button
+          onClick={() =>
+            window.open(
+              `${replId}.dhruvilspace.site`,
+              "_blank",
+              "noopener,noreferrer",
+            )
+          }
+          className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          See Output on New Tab
+        </button>
+        <a
+          className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          href={`http://${replId}.dhruvilspace.site`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          fasdfdsaf
+        </a>
+      </div>
+      <Workspace>
+        <LeftPanel>
+          <Editor
+            socket={socket}
+            selectedFile={selectedFile}
+            onSelect={onSelect}
+            onNewFile={onNewFile}
+            onNewFolder={onNewFolder}
+            files={fileStructure}
+          />
+        </LeftPanel>
+        <RightPanel>
+          {showOutput && <Output />}
+          <Terminal socket={socket} ref={terminalRef} />
+        </RightPanel>
+      </Workspace>
+    </Container>
+  );
+};

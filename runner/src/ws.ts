@@ -1,8 +1,8 @@
 import { Server, Socket } from "socket.io";
 import { Server as HttpServer } from "http";
-import { saveToS3 } from "./aws";
+import { saveFolderToS3, saveToS3 } from "./aws";
 import path from "path";
-import { fetchDir, fetchFileContent, saveFile } from "./fs";
+import { fetchDir, fetchFileContent, saveFile, saveFolder } from "./fs";
 import { TerminalManager } from "./pty";
 
 const terminalManager = new TerminalManager();
@@ -63,9 +63,32 @@ function initHandlers(socket: Socket, replId: string) {
   socket.on(
     "updateContent",
     async ({ path: filePath, content }: { path: string; content: string }) => {
+      console.log(filePath);
       const fullPath = `/workspace/${filePath}`;
       await saveFile(fullPath, content);
       await saveToS3(`code/${replId}`, filePath, content);
+    },
+  );
+
+  socket.on(
+    "newFile",
+    async ({ path, name }: { path: string; name: string }) => {
+      const fullPath = `/workspace/${path}/${name}`;
+      console.log(fullPath);
+      await saveFile(fullPath, "");
+      await saveToS3(`code/${replId}`, `${path}/${name}`, "");
+    },
+  );
+
+  socket.on(
+    "newFolder",
+    async ({ path, name }: { path: string; name: string }) => {
+      console.log(path, name);
+
+      const fullPath = `/workspace/${path}/${name}`;
+      console.log(fullPath)
+      await saveFolder(fullPath);
+      await saveFolderToS3(`code/${replId}`, `${path}/${name}`);
     },
   );
 
