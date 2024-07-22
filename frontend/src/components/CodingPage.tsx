@@ -54,7 +54,7 @@ const RightPanel = styled.div`
   width: 40%;
 `;
 
-const SERVICE_URL = "http://localhost:3001";
+const SERVICE_URL = "/backend";
 export const CodingPage = () => {
   const [podCreated, setPodCreated] = useState(false);
   const [searchParams] = useSearchParams();
@@ -173,7 +173,7 @@ export const CodingPagePostPodCreation = () => {
   }
   if (!socket) return;
 
-  console.log(replId, "REPLID")
+  console.log(replId, "REPLID");
 
   return (
     <Container>

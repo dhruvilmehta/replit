@@ -19,7 +19,7 @@ const SLUG_WORKS = [
   "open",
   "source",
 ];
-const SERVICE_URL = "http://localhost:3001";
+const SERVICE_URL = "/backend";
 
 /** Styled components */
 const Container = styled.div`

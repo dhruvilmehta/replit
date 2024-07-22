@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const SERVICE_URL = "http://localhost:3001";
+const SERVICE_URL = "/backend";
 export const Login = () => {
   const [username, setUsername] = useState<string>("dhruvil");
   const [password, setPassword] = useState<string>("1234");
