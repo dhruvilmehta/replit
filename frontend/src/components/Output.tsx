@@ -5,7 +5,7 @@ export const Output = () => {
     const replId = searchParams.get('replId') ?? '';
     // const INSTANCE_URI = `http://${replId}.autogpt-cloud.com`;
     // const INSTANCE_URI = `http://${replId}.editor.work.gd`;
-    const INSTANCE_URI = `http://${replId}.dhruvilspace.site`;
+    const INSTANCE_URI = `http://${replId}.replit.dhruvilspace.site`;
 
     return <div style={{height: "40vh", background: "white"}}>
         <iframe width={"100%"} height={"100%"} src={`${INSTANCE_URI}`} />

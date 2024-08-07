@@ -12,10 +12,11 @@ function useSocket(replId: string) {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(`ws://${replId}.socket.dhruvilspace.site`);
+    const newSocket = io(`ws://${replId}.socket.replit.dhruvilspace.site`);
     setSocket(newSocket);
 
     return () => {
+      console.log("Disconnecting");
       newSocket.disconnect();
     };
   }, [replId]);
@@ -54,7 +55,11 @@ const RightPanel = styled.div`
   width: 40%;
 `;
 
-const SERVICE_URL = "/backend";
+// const SERVICE_URL = "/backend";
+// const SERVICE_URL = "https://replit.dhruvilspace.site";
+// const SERVICE_URL = "http://localhost:3001";
+const SERVICE_URL = "http://52.73.145.74";
+
 export const CodingPage = () => {
   const [podCreated, setPodCreated] = useState(false);
   const [searchParams] = useSearchParams();
@@ -90,14 +95,17 @@ export const CodingPagePostPodCreation = () => {
 
   useEffect(() => {
     if (socket) {
+      console.log("Socket loaded");
       socket.on("loaded", ({ rootContent }: { rootContent: RemoteFile[] }) => {
         setLoaded(true);
         setFileStructure(rootContent);
+        console.log(rootContent, " RootContent");
       });
     }
   }, [socket]);
 
   const onSelect = (file: File) => {
+    console.log("OnSelect", file);
     if (file.type === Type.DIRECTORY) {
       socket?.emit("fetchDir", file.path, (data: RemoteFile[]) => {
         setFileStructure((prev) => {
@@ -184,25 +192,13 @@ export const CodingPagePostPodCreation = () => {
         >
           See output
         </button>
-        <button
-          onClick={() =>
-            window.open(
-              `${replId}.dhruvilspace.site`,
-              "_blank",
-              "noopener,noreferrer",
-            )
-          }
-          className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          See Output on New Tab
-        </button>
         <a
           className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          href={`http://${replId}.dhruvilspace.site`}
+          href={`http://${replId}.replit.dhruvilspace.site`}
           target="_blank"
           rel="noreferrer"
         >
-          fasdfdsaf
+          See Output on New Tab
         </a>
       </div>
       <Workspace>

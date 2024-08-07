@@ -19,8 +19,10 @@ const SLUG_WORKS = [
   "open",
   "source",
 ];
-const SERVICE_URL = "/backend";
-
+// const SERVICE_URL = "/backend";
+// const SERVICE_URL = "https://replit.dhruvilspace.site";
+// const SERVICE_URL = "http://localhost:3001";
+const SERVICE_URL = "http://52.73.145.74";
 /** Styled components */
 const Container = styled.div`
   padding: 20px;
