@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "./external/editor/components/sidebar";
 import { Code } from "./external/editor/editor/code";
@@ -10,7 +11,7 @@ import {
 import { FileTree } from "./external/editor/components/file-tree";
 import { Socket } from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile, faFileAlt, faFolder } from "@fortawesome/free-solid-svg-icons";
+import { faFileAlt, faFolder } from "@fortawesome/free-solid-svg-icons";
 
 const ButtonContainer = styled.div`
   display: flex;

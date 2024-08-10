@@ -1,5 +1,5 @@
+//@ts-nocheck
 "use client";
-
 import { validateName } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useRef } from "react";

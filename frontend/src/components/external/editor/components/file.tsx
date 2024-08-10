@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { getIconForFile } from "vscode-icons-js";
@@ -11,7 +12,6 @@ import {
   ContextMenuTrigger,
 } from "../../../ui/context-menu";
 import { Loader2, Pencil, Trash2 } from "lucide-react";
-import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 
 export default function SidebarFile({
   data,

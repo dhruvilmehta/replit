@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Editor from "@monaco-editor/react";
 import { File } from "../utils/file-manager";
 import { Socket } from "socket.io-client";

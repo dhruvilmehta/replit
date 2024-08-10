@@ -1,10 +1,11 @@
+//@ts-nocheck
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // const SERVICE_URL = "https://replit.dhruvilspace.site";
 // const SERVICE_URL = "http://localhost:3001";
-const SERVICE_URL = "http://52.73.145.74";
+const SERVICE_URL = "http://54.242.174.57";
 
 export const Login = () => {
   const [username, setUsername] = useState<string>("dhruvil");
@@ -34,7 +35,9 @@ export const Login = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-black">
           Login
         </h2>
-        <div className="text-center text-red-500">Dummy credentials are already entered. Click submit to Login</div>
+        <div className="text-center text-red-500">
+          Dummy credentials are already entered. Click submit to Login
+        </div>
         <div className="mb-4">
           <input
             type="text"

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -5,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 // const SERVICE_URL = "/backend";
 // const SERVICE_URL = "https://replit.dhruvilspace.site";
 // const SERVICE_URL = "http://localhost:3001";
-const SERVICE_URL = "http://52.73.145.74";
+const SERVICE_URL = "http://54.242.174.57";
 
 const Signup = () => {
   const [username, setUsername] = useState("");

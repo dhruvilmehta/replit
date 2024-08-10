@@ -1,7 +1,7 @@
 export enum Type {
   FILE,
   DIRECTORY,
-  DUMMY
+  DUMMY,
 }
 
 interface CommonProps {
@@ -14,9 +14,7 @@ interface CommonProps {
   depth: number;
 }
 
-export interface File extends CommonProps {
-  
-}
+export interface File extends CommonProps {}
 
 export interface RemoteFile {
   type: "file" | "dir";
@@ -34,8 +32,8 @@ export interface Directory extends CommonProps {
  * @param data fetch获取的结果
  */
 export function buildFileTree(data: RemoteFile[]): Directory {
-  const dirs = data.filter(x => x.type === "dir");
-  const files = data.filter(x => x.type === "file");
+  const dirs = data.filter((x) => x.type === "dir");
+  const files = data.filter((x) => x.type === "file");
   const cache = new Map<string, Directory | File>(); // 缓存
   // 待构建的根目录
   let rootDir: Directory = {
@@ -46,7 +44,7 @@ export function buildFileTree(data: RemoteFile[]): Directory {
     path: "",
     depth: 0,
     dirs: [],
-    files: []
+    files: [],
   };
   // 将<id，目录对象>存入map
   dirs.forEach((item) => {
@@ -54,11 +52,16 @@ export function buildFileTree(data: RemoteFile[]): Directory {
       id: item.path,
       name: item.name,
       path: item.path,
-      parentId: item.path.split("/").length === 2 ? "0" : dirs.find(x => x.path === item.path.split("/").slice(0, -1).join("/"))?.path,
+      parentId:
+        item.path.split("/").length === 2
+          ? "0"
+          : dirs.find(
+              (x) => x.path === item.path.split("/").slice(0, -1).join("/"),
+            )?.path,
       type: Type.DIRECTORY,
       depth: 0,
       dirs: [],
-      files: []
+      files: [],
     };
 
     cache.set(dir.id, dir);
@@ -69,14 +72,19 @@ export function buildFileTree(data: RemoteFile[]): Directory {
       id: item.path,
       name: item.name,
       path: item.path,
-      parentId: item.path.split("/").length === 2 ? "0" : dirs.find(x => x.path === item.path.split("/").slice(0, -1).join("/"))?.path,
+      parentId:
+        item.path.split("/").length === 2
+          ? "0"
+          : dirs.find(
+              (x) => x.path === item.path.split("/").slice(0, -1).join("/"),
+            )?.path,
       type: Type.FILE,
-      depth: 0
+      depth: 0,
     };
     cache.set(file.id, file);
   });
   // 开始遍历构建文件树
-  cache.forEach((value, key) => {
+  cache.forEach((value) => {
     // '0'表示文件或目录位于根目录
     if (value.parentId === "0") {
       if (value.type === Type.DIRECTORY) rootDir.dirs.push(value as Directory);
@@ -112,7 +120,7 @@ function getDepth(rootDir: Directory, curDepth: number) {
 
 export function findFileByName(
   rootDir: Directory,
-  filename: string
+  filename: string,
 ): File | undefined {
   let targetFile: File | undefined = undefined;
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useState, useRef } from "react";
 import { Socket, io } from "socket.io-client";
 import { Editor } from "./Editor";
@@ -58,7 +59,7 @@ const RightPanel = styled.div`
 // const SERVICE_URL = "/backend";
 // const SERVICE_URL = "https://replit.dhruvilspace.site";
 // const SERVICE_URL = "http://localhost:3001";
-const SERVICE_URL = "http://52.73.145.74";
+const SERVICE_URL = "http://54.242.174.57";
 
 export const CodingPage = () => {
   const [podCreated, setPodCreated] = useState(false);

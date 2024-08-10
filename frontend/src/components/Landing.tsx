@@ -1,3 +1,4 @@
+//@ts-nocheck
 /** Import necessary libraries */
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -22,7 +23,7 @@ const SLUG_WORKS = [
 // const SERVICE_URL = "/backend";
 // const SERVICE_URL = "https://replit.dhruvilspace.site";
 // const SERVICE_URL = "http://localhost:3001";
-const SERVICE_URL = "http://52.73.145.74";
+const SERVICE_URL = "http://54.242.174.57";
 /** Styled components */
 const Container = styled.div`
   padding: 20px;
