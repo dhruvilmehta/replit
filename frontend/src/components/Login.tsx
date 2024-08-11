@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 // const SERVICE_URL = "https://replit.dhruvilspace.site";
 // const SERVICE_URL = "http://localhost:3001";
 const SERVICE_URL = "http://54.242.174.57";
+// const SERVICE_URL = "https://replit.dhruvilspace.site";
 
 export const Login = () => {
   const [username, setUsername] = useState<string>("dhruvil");

@@ -76,7 +76,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: service_name.socket.dhruvilspace.site
+    - host: service_name.socket.replit.dhruvilspace.site
       http:
         paths:
           - path: /
@@ -86,7 +86,7 @@ spec:
                 name: service_name
                 port:
                   number: 3001
-    - host: service_name.dhruvilspace.site
+    - host: service_name.replit.dhruvilspace.site
       http:
         paths:
           - path: /
@@ -96,39 +96,3 @@ spec:
                 name: service_name
                 port:
                   number: 3000
-
----
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: cleanup-deployments
-spec:
-  schedule: "* * * * *" # Runs every minute
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            - name: cleanup
-              image: bitnami/kubectl:latest
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  #!/bin/sh
-                  EXPIRY_TIME=600
-
-                  DEPLOYMENTS=$(kubectl get deployments --no-headers -o custom-columns=":metadata.name")
-
-                  for DEPLOYMENT in $DEPLOYMENTS; do
-                    DEPLOYMENT_TIMESTAMP=$(kubectl get deployment $DEPLOYMENT -o=jsonpath='{.metadata.creationTimestamp}')
-                    DEPLOYMENT_TIMESTAMP_SECONDS=$(date -d $DEPLOYMENT_TIMESTAMP +%s)
-                    CURRENT_TIME_SECONDS=$(date +%s)
-                    DEPLOYMENT_AGE=$((CURRENT_TIME_SECONDS - DEPLOYMENT_TIMESTAMP_SECONDS))
-
-                    if [ $DEPLOYMENT_AGE -gt $EXPIRY_TIME ]; then
-                      echo "Deleting deployment: $DEPLOYMENT"
-                      kubectl delete deployment $DEPLOYMENT
-                    fi
-                  done
-          restartPolicy: OnFailure
