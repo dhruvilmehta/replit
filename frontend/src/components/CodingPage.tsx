@@ -13,7 +13,7 @@ function useSocket(replId: string) {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(`ws://${replId}.socket.replit.dhruvilspace.site`);
+    const newSocket = io(`wss://${replId}.socket.replit.dhruvilspace.site`);
     setSocket(newSocket);
 
     return () => {
@@ -59,7 +59,8 @@ const RightPanel = styled.div`
 // const SERVICE_URL = "/backend";
 // const SERVICE_URL = "https://replit.dhruvilspace.site";
 // const SERVICE_URL = "http://localhost:3001";
-const SERVICE_URL = "http://54.242.174.57";
+// const SERVICE_URL = "http://54.242.174.57";
+const SERVICE_URL = "https://replitbackend.dhruvilspace.site";
 
 export const CodingPage = () => {
   const [podCreated, setPodCreated] = useState(false);
