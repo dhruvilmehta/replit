@@ -108,6 +108,9 @@ export const Landing = () => {
           onChange={(e) => setLanguage(e.target.value)}
         >
           <option value="node-js">Node.js</option>
+          <option value="pascal-compiler">
+            Pascal-Compiler (created with java)
+          </option>
           <option value="python">Python</option>
         </StyledSelect>
         <StyledButton
