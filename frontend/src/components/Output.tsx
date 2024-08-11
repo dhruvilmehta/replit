@@ -6,7 +6,7 @@ export const Output = () => {
   const replId = searchParams.get("replId") ?? "";
   // const INSTANCE_URI = `http://${replId}.autogpt-cloud.com`;
   // const INSTANCE_URI = `http://${replId}.editor.work.gd`;
-  const INSTANCE_URI = `http://${replId}.replit.dhruvilspace.site`;
+  const INSTANCE_URI = `https://${replId}.replit.dhruvilspace.site`;
 
   return (
     <div style={{ height: "40vh", background: "white" }}>
