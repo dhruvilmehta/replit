@@ -196,7 +196,7 @@ export const CodingPagePostPodCreation = () => {
         </button>
         <a
           className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          href={`http://${replId}.replit.dhruvilspace.site`}
+          href={`https://${replId}.replit.dhruvilspace.site`}
           target="_blank"
           rel="noreferrer"
         >
