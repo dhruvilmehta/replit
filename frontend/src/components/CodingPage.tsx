@@ -88,6 +88,7 @@ export const CodingPage = () => {
 export const CodingPagePostPodCreation = () => {
   const [searchParams] = useSearchParams();
   const replId = searchParams.get("replId") ?? "";
+  const language = searchParams.get("language") ?? "";
   const [loaded, setLoaded] = useState(false);
   const socket = useSocket(replId);
   const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
@@ -191,18 +192,45 @@ export const CodingPagePostPodCreation = () => {
     <Container>
       <div className="mb-4 flex justify-between items-center">
         <div className="text-left">
-          For more details regarding how to run the code, view the Readme.md
-          file.
+          {language === "pascal-compiler" && (
+            <div class="bg-gray-400 rounded-lg m-2 p-2 shadow-md text-white text-sm">
+              <p class="font-semibold">
+                For more details regarding how to run the code, view the{" "}
+                <span class="underline">Readme.md</span> file.
+              </p>
+              <p class="text-sm">
+                Run the <span class="font-mono text-gray-800">hello.pas</span>{" "}
+                file by running this command in the terminal:
+                <span class="bg-gray-800 text-white text-sm font-mono m-1 p-1 rounded">
+                  java -cp classes Pascal execute hello.pas
+                </span>
+              </p>
+            </div>
+          )}
+          {language === "node-js" && (
+            <div class="bg-gray-500 rounded shadow-md p-2 m-2 text-white">
+              <p class="text-sm font-semibold">
+                Run <span class="font-mono text-black-500 underline">npm i & npm run dev</span> on the terminal and
+                click on the{" "}
+                <span class="text-black-500 underline">See Output</span> button.
+              </p>
+              <p class="text-sm">
+                Your application should only run on port{" "}
+                <span class="font-mono text-white-800">3000</span> to be able to
+                see the output.
+              </p>
+            </div>
+          )}
         </div>
         <div className="flex space-x-2">
           <button
             onClick={() => setShowOutput(!showOutput)}
-            className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="m-1 px-2 py-2 bg-gray-500 text-white rounded hover:bg-blue-600"
           >
             See output
           </button>
           <a
-            className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="m-1 px-2 py-2 bg-gray-500 text-white rounded hover:bg-blue-600"
             href={`https://${replId}.replit.dhruvilspace.site`}
             target="_blank"
             rel="noreferrer"

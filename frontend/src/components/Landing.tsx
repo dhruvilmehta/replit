@@ -127,7 +127,7 @@ export const Landing = () => {
             else if (response.status === 409) alert("Repl already exists");
             else {
               setLoading(false);
-              navigate(`/coding/?replId=${replId}`);
+              navigate(`/coding/?replId=${replId}&language=${language}`);
             }
           }}
         >
