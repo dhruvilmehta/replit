@@ -29,6 +29,7 @@ export const Code = ({ selectedFile, socket }: { selectedFile: File | undefined,
 
   return (
       <Editor
+        width="100%"
         height="100vh"
         language={language}
         value={code}

@@ -44,7 +44,11 @@ export const Editor = ({
 
   useEffect(() => {
     if (!selectedFile) {
-      onSelect(rootDir.files[0]);
+      const readme = rootDir.files.filter(
+        (file) => file.name.toLowerCase() === "readme.md",
+      );
+      if (readme.length !== 0) onSelect(readme[0]);
+      else onSelect(rootDir.files[0]);
     }
   }, [selectedFile]);
 
@@ -60,28 +64,37 @@ export const Editor = ({
       <Main>
         <Sidebar>
           <ButtonContainer>
-            {/* <button onClick={()=>onNewFile(newFileName)}>New File</button>
-            <button onClick={()=>onNewFolder(newFileName)}>New Folder</button> */}
-            <button
-              className="m-1 text-blue-500 hover:text-blue-600 cursor-pointer text-sm p-1.5"
-              onClick={() => {
-                setNewFileOrFolder(true);
-                setNewType("file");
-              }}
-            >
-              <FontAwesomeIcon icon={faFileAlt} className="text-xl" />
-            </button>
+            <div className="flex justify-between items-center bg-gray-700 p-1 rounded w-full">
+              <div className="font-bold text-white-700">Workspace</div>
+              <div className="flex space-x-2">
+                <button
+                  className="m-1 text-blue-500 hover:text-blue-600 cursor-pointer text-sm p-1.5 bg-gray-500 rounded relative group"
+                  onClick={() => {
+                    setNewFileOrFolder(true);
+                    setNewType("file");
+                  }}
+                >
+                  <FontAwesomeIcon icon={faFileAlt} className="text-xl" />
+                  <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 p-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100">
+                    New File
+                  </span>
+                </button>
 
-            <div
-              className="m-1 text-blue-500 hover:text-blue-600 cursor-pointer text-sm p-1.5"
-              onClick={() => {
-                setNewFileOrFolder(true);
-                setNewType("folder");
-              }}
-            >
-              {/* <FontAwesomeIcon icon={faFolder} /> */}
-              <FontAwesomeIcon icon={faFolder} className="text-xl" />
+                <div
+                  className="m-1 text-blue-500 hover:text-blue-600 cursor-pointer text-sm p-1.5 bg-gray-500 rounded relative group"
+                  onClick={() => {
+                    setNewFileOrFolder(true);
+                    setNewType("folder");
+                  }}
+                >
+                  <FontAwesomeIcon icon={faFolder} className="text-xl" />
+                  <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 p-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100">
+                    New Folder
+                  </span>
+                </div>
+              </div>
             </div>
+
             {/* <button onClick={()=>setNewFolder(true)}>New Folder</button> */}
           </ButtonContainer>
           <FileTree
@@ -94,7 +107,10 @@ export const Editor = ({
           />
           {/* <input placeholder="Enter Name" onChange={(e)=>setNewFileName(e.target.value)}></input> */}
         </Sidebar>
-        <Code socket={socket} selectedFile={selectedFile} />
+        <div className="w-full flex flex-col">
+          <div className="bg-slate-600 w-36 inline-block text-center">{selectedFile?.name}</div>
+          <Code socket={socket} selectedFile={selectedFile} />
+        </div>
       </Main>
     </div>
   );

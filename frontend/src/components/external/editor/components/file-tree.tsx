@@ -35,7 +35,7 @@ interface SubTreeProps {
 
 const SubTree = (props: SubTreeProps) => {
   return (
-    <div>
+    <div className="overflow-y-scroll h-screen">
       {props.directory.dirs.sort(sortDir).map((dir) => (
         <React.Fragment key={dir.id}>
           <DirDiv
@@ -97,7 +97,7 @@ const FileDiv = ({
   };
 
   return (
-    <div>
+    <div className="overflow-auto">
       <Div depth={depth} isSelected={isSelected} onClick={onClick}>
         <FileIcon name={icon} extension={file.name.split(".").pop() || ""} />
         <span style={{ marginLeft: 1 }}>{file.name}</span>

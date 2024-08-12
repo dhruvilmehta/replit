@@ -178,33 +178,45 @@ export const CodingPagePostPodCreation = () => {
     }
   }, [showOutput]);
 
+  const [panelWidth, setLeftPanelWidth] = useState(60);
+
   if (!loaded) {
     return "Loading...";
   }
   if (!socket) return;
 
-  console.log(replId, "REPLID");
+  console.log(panelWidth, "Panel width");
 
   return (
     <Container>
-      <div className="mb-4 flex justify-end">
-        <button
-          onClick={() => setShowOutput(!showOutput)}
-          className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          See output
-        </button>
-        <a
-          className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          href={`https://${replId}.replit.dhruvilspace.site`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          See Output on New Tab
-        </a>
+      <div className="mb-4 flex justify-between items-center">
+        <div className="text-left">
+          For more details regarding how to run the code, view the Readme.md
+          file.
+        </div>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setShowOutput(!showOutput)}
+            className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            See output
+          </button>
+          <a
+            className="m-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            href={`https://${replId}.replit.dhruvilspace.site`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            See Output on New Tab
+          </a>
+        </div>
       </div>
-      <Workspace>
-        <LeftPanel>
+
+      <div className="flex h-[calc(100vh-64px)]">
+        <div
+          className="flex-shrink-0"
+          style={{ width: `60%` }} // Setting LeftPanel width to 60%
+        >
           <Editor
             socket={socket}
             selectedFile={selectedFile}
@@ -213,12 +225,19 @@ export const CodingPagePostPodCreation = () => {
             onNewFolder={onNewFolder}
             files={fileStructure}
           />
-        </LeftPanel>
-        <RightPanel>
+        </div>
+        {/* <div
+          className="resize-handle"
+          style={{ width: "10px", cursor: "col-resize" }}
+        ></div> */}
+        <div
+          className="flex-grow"
+          style={{ width: `40%` }} // Setting RightPanel width to 40%
+        >
           {showOutput && <Output />}
           <Terminal socket={socket} ref={terminalRef} />
-        </RightPanel>
-      </Workspace>
+        </div>
+      </div>
     </Container>
   );
 };
