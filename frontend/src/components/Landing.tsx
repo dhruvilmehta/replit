@@ -95,7 +95,7 @@ export const Landing = () => {
   return (
     <div>
       <Container>
-        <Title>Lepl lit</Title>
+        <Title>Replit - Create new Repl here</Title>
         <StyledInput
           onChange={(e) => setReplId(e.target.value)}
           type="text"
