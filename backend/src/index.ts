@@ -16,19 +16,16 @@ app.use(cors())
 app.use("/init", initRouter)
 app.use("/service", serviceRouter)
 
-app.get("/getRepls", async(req: Request, res: Response)=>{
-    const token = req.headers.authorization;
-    const existingUser= await prisma.user.findFirst({
-        where:{
-            token: token
-        }
-    })
-    if(!existingUser) return res.status(401).send("Invalid token")
-    const repls=await prisma.repl.findMany({
-        where:{
-            userId: existingUser.name
-        },
-        select:{
+app.get("/getRepls", async (req: Request, res: Response) => {
+    // const token = req.headers.authorization;
+    // const existingUser= await prisma.user.findFirst({
+    //     where:{
+    //         token: token
+    //     }
+    // })
+    // if(!existingUser) return res.status(401).send("Invalid token")
+    const repls = await prisma.repl.findMany({
+        select: {
             name: true
         }
     })
@@ -39,45 +36,45 @@ app.get("/getRepls", async(req: Request, res: Response)=>{
 })
 
 
-app.post("/signup", async (req: Request, res: Response)=>{
-    const {username, password}=req.body
-    const existingUser= await prisma.user.findFirst({
-        where:{
+app.post("/signup", async (req: Request, res: Response) => {
+    const { username, password } = req.body
+    const existingUser = await prisma.user.findFirst({
+        where: {
             name: username
         }
     })
 
-    if(existingUser) return res.status(409).json({ error: 'User already exists' })
+    if (existingUser) return res.status(409).json({ error: 'User already exists' })
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const token = jwt.sign({username: username}, process.env.JWT_SECRET || "");
+    const token = jwt.sign({ username: username }, process.env.JWT_SECRET || "");
     await prisma.user.create({
-        data:{
+        data: {
             name: username,
             password: hashedPassword,
             token: token
         }
     })
 
-    return res.status(201).json({token: token, message: "Registered successfully"})
+    return res.status(201).json({ token: token, message: "Registered successfully" })
 })
 
-app.post("/signin", async(req: Request, res: Response)=>{
-    const {username, password}=req.body;
-    const user=await prisma.user.findFirst({
-        where:{
+app.post("/signin", async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    const user = await prisma.user.findFirst({
+        where: {
             name: username,
         }
     })
     console.log(username, password, user)
-    if(!user) return res.status(404).json({"message":"User not found"})
+    if (!user) return res.status(404).json({ "message": "User not found" })
 
-    const isTrue=await bcrypt.compare(password, user.password)
-    if(!isTrue) return res.status(401).json({"message":"Wrong password"})
-    return res.status(201).json({"token": user.token, "username": user.name})
+    const isTrue = await bcrypt.compare(password, user.password)
+    if (!isTrue) return res.status(401).json({ "message": "Wrong password" })
+    return res.status(201).json({ "token": user.token, "username": user.name })
 })
 
-app.listen(process.env.PORT || 3001, ()=>{
+app.listen(process.env.PORT || 3001, () => {
     console.log("Started listening on port ", process.env.PORT)
 })
